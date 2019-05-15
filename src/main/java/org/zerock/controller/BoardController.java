@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,43 +40,50 @@ public class BoardController {
 		
 		rttr.addFlashAttribute("msg", "success");
 		
-		return "redirect:/board/listAll";
+		return "redirect:/board/listPage";
 	}
-	@RequestMapping(value = "/listAll",method = RequestMethod.GET)
-	public void listAll(Model model)throws Exception{
-		logger.info("show all list ............");
-		System.out.println(model);
-		model.addAttribute("list", service.listAll());
-		
-	}
-	@RequestMapping(value = "/read",method = RequestMethod.GET)
-	public void read(@RequestParam("bno") int bno, Model model)throws Exception{
+
+	/*
+	 * @RequestMapping(value = "/listAll",method = RequestMethod.GET) public void
+	 * listAll(Model model)throws Exception{
+	 * logger.info("show all list ............"); System.out.println(model);
+	 * model.addAttribute("list", service.listAll());
+	 * 
+	 * }
+	 */
+	@RequestMapping(value = "/readPage",method = RequestMethod.GET)
+	public void read(@RequestParam("bno") int bno,@ModelAttribute("cri") Criteria cri, Model model)throws Exception{
 		logger.info("show read ............");
+		System.out.println("게시물 bno : "+bno+"/ cri 정보 : "+cri);
 		model.addAttribute(service.read(bno));
-		System.out.println(model);
 	}
 	
-	@RequestMapping(value = "/remove",method = RequestMethod.POST)
-	public String remove(@RequestParam("bno") int bno,RedirectAttributes rttr)throws Exception{
+	@RequestMapping(value = "/removePage",method = RequestMethod.POST)
+	public String remove(@RequestParam("bno") int bno,@ModelAttribute("cri") Criteria cri,RedirectAttributes rttr)throws Exception{
 		logger.info("remove ............ ="+bno);
 		service.remove(bno);
 		rttr.addFlashAttribute("msg", "SUCCESS");
-		return "redirect:/board/listAll";
+		rttr.addFlashAttribute("page", cri.getPage());
+		rttr.addFlashAttribute("perPageNum", cri.getPerPageNum());
+		return "redirect:/board/listPage";
 	}
-	@RequestMapping(value = "/modify",method = RequestMethod.GET)
-	public void modifyGET(int bno, Model model)throws Exception{
+	@RequestMapping(value = "/modifyPage",method = RequestMethod.GET)
+	public void modifyGET(int bno,@ModelAttribute("cri") Criteria cri, Model model)throws Exception{
 		model.addAttribute(service.read(bno));
+		
 	}
 	
-	@RequestMapping(value = "/modify", method =RequestMethod.POST)
-	public String ModifyPOST(BoardVO board, RedirectAttributes rttr)throws Exception {
+	@RequestMapping(value = "/modifyPage", method =RequestMethod.POST)
+	public String ModifyPOST(BoardVO board,@ModelAttribute("cri") Criteria cri, RedirectAttributes rttr)throws Exception {
 		
 		logger.info("mod post ...........");
 		System.out.println(board);
 		service.modify(board);
+		rttr.addFlashAttribute("page", cri.getPage());
+		rttr.addFlashAttribute("perPageNum", cri.getPerPageNum());
 		rttr.addFlashAttribute("msg", "SUCCESS");
 		
-		return "redirect:/board/listAll";
+		return "redirect:/board/listPage";
 	}
 	@RequestMapping(value = "/listCri", method = RequestMethod.GET)
 	public void listAll(Criteria cri, Model model)throws Exception{

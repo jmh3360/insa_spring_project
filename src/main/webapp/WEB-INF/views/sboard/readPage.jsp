@@ -15,33 +15,35 @@
  				<div class="box-header with-border">
  						<h3 class="box-title">READ BOARD</h3>
  				</div>
- 			<form role="form" method="post">
  				<div class="box-body">
- 					<div class="form-group">
-						<label for="exampleInputEmail1">BNO</label>
-						<input type="text" name="bno" class="form-control" 
-						value='${boardVO.bno}' readonly="readonly" />
-					</div>
  					<div class="form-group">
 						<label for="exampleInputEmail1">Title</label>
 						<input type="text" name="title" class="form-control" 
-						value='${boardVO.title}' />
+						value='${boardVO.title}' readonly="readonly" />
 					</div>
 					<div class="form-group">
 						<label for="exampleInputPassword1">Content</label>
-						<textarea class="form-control" name="content" rows="3">${boardVO.content}</textarea>
+						<textarea class="form-control" name="content" rows="3" 
+						readonly="readonly">${boardVO.content}</textarea>
 					</div>
 					<div class="form-group">
 						<label for="exampleInputEmail1">Writer</label>
 						<input type="text" name="writer" class="form-control" 
-						value='${boardVO.writer}' readonly />
+						value='${boardVO.writer}' readonly="readonly" />
 					</div>
  				</div>
- 			</form>
  				<div class="box-footer">
- 					<button type="submit" class="btn btn-primary">SAVE</button>
- 					<button type="submit" class="btn btn-warning">CANSCEL</button>
+ 					<button type="submit" class="btn btn-warning">Modify</button>
+ 					<button type="submit" class="btn btn-danger">REMOVE</button>
+ 					<button type="submit" class="btn btn-primary">GO LIST</button>
  				</div>
+				<form role="form" action="modifyPage" method="post">
+					<input type="hidden" name="bno" value='${boardVO.bno}' />
+					<input type="hidden" name="page" value='${cri.page}' />
+					<input type="hidden" name="perPageNum" value='${cri.perPageNum}' />
+					<input type="hidden" name="searchType" value='${cri.searchType}' />
+					<input type="hidden" name="keyword" value='${cri.keyword}' />
+				</form>
  			</div>
  		</div>
  	</div>
@@ -53,14 +55,17 @@
 	 console.log(formObj);
 	 
 	 $('.btn-warning').on('click',function(){
-		 self.location = "/board/listAll";
+		 formObj.attr({'method':'get'});
+		 formObj.submit();
+	 });
+	 $('.btn-danger').on('click',function(){
+		 formObj.attr({'action':'/sboard/removePage'});
+		 formObj.submit();
 	 });
 	 $('.btn-primary').on('click',function(){
-		formObj.submit();
+		 formObj.attr({'action':'/sboard/list','method':'get'});
+		 formObj.submit();
 	 });
-	 
-	 
-	 
  });
  </script>
  
